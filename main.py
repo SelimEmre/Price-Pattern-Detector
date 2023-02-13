@@ -4,10 +4,13 @@ from pandas import *
 data = read_csv("Bitstamp_BTCUSD_d.csv")
 list = data['close'].tolist()
 
-howManyColumn = 6
-tolerancePercentage = 0.32
+lineCount = 6
+tolerancePercentage = 0.30
 successPercentList = []
 searchLoopCount = 0
+
+print("Line Count: " + str(lineCount) + " Tolerance Percentage: " + str(tolerancePercentage))
+print("--------------------------------------------------------")
 
 def getPriceChange(index):
     return "{:.2f}".format(100 * (list[index + 1] - list[index]) / list[index])
@@ -19,7 +22,7 @@ for currentIndex, item in enumerate(list):
     searchLoopCount = 0
 
     # Detect current index price change list
-    for x in range(currentIndex, currentIndex + howManyColumn + 1):
+    for x in range(currentIndex, currentIndex + lineCount + 1):
         if x + 1 == len(list):
             break
         priceChange = getPriceChange(x)
@@ -41,19 +44,19 @@ for currentIndex, item in enumerate(list):
                 detectedPriceChangeList.append(priceChange)
                 sampleRate += 1
 
-                if sampleRate == howManyColumn:
+                if sampleRate == lineCount:
                     expectedPriceChange = getPriceChange(searchLoopCount + x + 1)
                     detectedPriceChangeList.append(expectedPriceChange)
 
                     detectedPriceList.append(list[searchLoopCount + x + 1])
 
-                    print("--------------------------------------------------------")
-                    print("sampleRate: " + str(howManyColumn) + " searchLoopCount: " + str(searchLoopCount+2) + " index: " + str(currentIndex))
-                    print("percentage list: " + str(priceChangeList) + " detected price list: " + str(detectedPriceChangeList))
-                    print("detectedPricelist:" + str(detectedPriceList))
-                    print("IndexPricelist:" + str(indexPriceList))
+                    print("Current Index: " + str(currentIndex) + " Detected Index: " + str(searchLoopCount+2))
+                    print("Index price percentage list: " + str(priceChangeList))
+                    print("Detected price percentage list: " + str(detectedPriceChangeList))
+                    print("Index Price list: " + str(indexPriceList))
+                    print("Detected Price list: " + str(detectedPriceList))
 
-                    print("Real Price percent: " + priceChangeList[howManyColumn] + " Expected Price percent: " + expectedPriceChange)
+                    print("Real Price percent: " + priceChangeList[lineCount] + " Expected Price percent: " + expectedPriceChange)
                     print("--------------------------------------------------------")
             else:
                 break
