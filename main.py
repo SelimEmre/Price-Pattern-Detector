@@ -1,25 +1,25 @@
-import pandas
+# pylint: disable=line-too-long
+"""This import needs for reading csv files"""
+import pandas as pd
 
 # Read the csv file and store it in the data variable
-data = pandas.read_csv("Bitstamp_BTCUSD_d.csv")
+data = pd.read_csv("Bitstamp_BTCUSD_d.csv")
 btcPriceCloseList = data['close'].tolist()
 
 LINE_COUNT = 6
 TOLERANCE_PERCENTAGE = 0.30
 
-print("Line Count: " + str(LINE_COUNT))
-print("Tolerance Percentage: " + str(TOLERANCE_PERCENTAGE))
+print(f"Line Count: {LINE_COUNT}")
+print(f"Tolerance Percentage: {TOLERANCE_PERCENTAGE}")
 print("--------------------------------------------------------")
 
 
 def get_price_change(index):
-    return "{:.2f}". \
-        format(100 * (btcPriceCloseList[index + 1] -
-                      btcPriceCloseList[index]) / btcPriceCloseList[index])
+    """This function calculates the percentage difference between two prices"""
+    return f'{100 * (btcPriceCloseList[index + 1] - btcPriceCloseList[index]) / btcPriceCloseList[index]:.2f}'
 
 
-for currentIndex in range(0, len(btcPriceCloseList)):
-
+for currentIndex in range(len(btcPriceCloseList)):
     priceChangeList = []
     indexPriceList = []
 
@@ -28,14 +28,12 @@ for currentIndex in range(0, len(btcPriceCloseList)):
         if line + 1 == len(btcPriceCloseList):
             break
         priceChange = get_price_change(line)
-        priceChangeList.append(priceChange)
+        priceChangeList.append(priceChange) #
         indexPriceList.append(btcPriceCloseList[line])
 
-    for loopIndex in range(0, len(btcPriceCloseList)):
 
-        if loopIndex == currentIndex:
-            break
-        sampleRate = 0
+    for loopIndex in range(currentIndex):
+        sampleRate: int = 0
         detectedPriceChangeList = []
         detectedPriceList = []
 
@@ -43,25 +41,22 @@ for currentIndex in range(0, len(btcPriceCloseList)):
             priceChange = get_price_change(loopIndex + line)
             detectedPriceList.append(btcPriceCloseList[loopIndex + line])
 
-            if float(priceChangeList[line]) - TOLERANCE_PERCENTAGE < \
-                    float(priceChange) < float(priceChangeList[line]) + TOLERANCE_PERCENTAGE:
+            if float(value) - TOLERANCE_PERCENTAGE < float(priceChange) < float(value) + TOLERANCE_PERCENTAGE:
                 detectedPriceChangeList.append(priceChange)
                 sampleRate += 1
 
                 if sampleRate == LINE_COUNT:
                     expectedPriceChange = get_price_change(loopIndex + line + 1)
                     detectedPriceChangeList.append(expectedPriceChange)
-
                     detectedPriceList.append(btcPriceCloseList[loopIndex + line + 1])
 
-                    print("CurrentIndex:{0} DetectedIndex:{1}".format(str(currentIndex), str(loopIndex + 2)))
-                    print("Index price percentage list: " + str(priceChangeList))
-                    print("Detected price percentage list: " + str(detectedPriceChangeList))
-                    print("Index Price list: " + str(indexPriceList))
-                    print("Detected Price list: " + str(detectedPriceList))
-
-                    print("Real Price percent: " + priceChangeList[
-                        LINE_COUNT] + " Expected Price percent: " + expectedPriceChange)
+                    print(f"CurrentIndex: {currentIndex} DetectedIndex: {loopIndex + 2}")
+                    print(f"Index price percentage list: {priceChangeList}")
+                    print(f"Detected price percentage list: {detectedPriceChangeList}")
+                    print(f"Index Price list: {indexPriceList}")
+                    print(f"Detected Price list: {detectedPriceList}")
+                    print(
+                        f"Real Price percent: {priceChangeList[LINE_COUNT]} Expected Price percent: {expectedPriceChange}")
                     print("--------------------------------------------------------")
             else:
                 break
