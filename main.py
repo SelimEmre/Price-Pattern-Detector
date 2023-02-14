@@ -1,64 +1,67 @@
-from pandas import *
+import pandas
 
 # Read the csv file and store it in the data variable
-data = read_csv("Bitstamp_BTCUSD_d.csv")
-list = data['close'].tolist()
+data = pandas.read_csv("Bitstamp_BTCUSD_d.csv")
+btcPriceCloseList = data['close'].tolist()
 
-lineCount = 6
-tolerancePercentage = 0.30
-successPercentList = []
-searchLoopCount = 0
+LINE_COUNT = 6
+TOLERANCE_PERCENTAGE = 0.30
 
-print("Line Count: " + str(lineCount) + " Tolerance Percentage: " + str(tolerancePercentage))
+print("Line Count: " + str(LINE_COUNT))
+print("Tolerance Percentage: " + str(TOLERANCE_PERCENTAGE))
 print("--------------------------------------------------------")
 
-def getPriceChange(index):
-    return "{:.2f}".format(100 * (list[index + 1] - list[index]) / list[index])
 
-for currentIndex, item in enumerate(list):
+def get_price_change(index):
+    return "{:.2f}". \
+        format(100 * (btcPriceCloseList[index + 1] -
+                      btcPriceCloseList[index]) / btcPriceCloseList[index])
+
+
+for currentIndex in range(0, len(btcPriceCloseList)):
 
     priceChangeList = []
     indexPriceList = []
-    searchLoopCount = 0
 
     # Detect current index price change list
-    for x in range(currentIndex, currentIndex + lineCount + 1):
-        if x + 1 == len(list):
+    for line in range(currentIndex, currentIndex + LINE_COUNT + 1):
+        if line + 1 == len(btcPriceCloseList):
             break
-        priceChange = getPriceChange(x)
+        priceChange = get_price_change(line)
         priceChangeList.append(priceChange)
-        indexPriceList.append(list[x])
+        indexPriceList.append(btcPriceCloseList[line])
 
-    for a, b in zip(list[::1], list[1::1]):
-        if searchLoopCount == currentIndex:
+    for loopIndex in range(0, len(btcPriceCloseList)):
+
+        if loopIndex == currentIndex:
             break
         sampleRate = 0
         detectedPriceChangeList = []
         detectedPriceList = []
 
-        for x in range(0, len(priceChangeList)):
-            priceChange = getPriceChange(searchLoopCount + x)
-            detectedPriceList.append(list[searchLoopCount + x])
+        for line, value in enumerate(priceChangeList):
+            priceChange = get_price_change(loopIndex + line)
+            detectedPriceList.append(btcPriceCloseList[loopIndex + line])
 
-            if float(priceChangeList[x]) - tolerancePercentage < float(priceChange) < float(priceChangeList[x]) + tolerancePercentage:
+            if float(priceChangeList[line]) - TOLERANCE_PERCENTAGE < \
+                    float(priceChange) < float(priceChangeList[line]) + TOLERANCE_PERCENTAGE:
                 detectedPriceChangeList.append(priceChange)
                 sampleRate += 1
 
-                if sampleRate == lineCount:
-                    expectedPriceChange = getPriceChange(searchLoopCount + x + 1)
+                if sampleRate == LINE_COUNT:
+                    expectedPriceChange = get_price_change(loopIndex + line + 1)
                     detectedPriceChangeList.append(expectedPriceChange)
 
-                    detectedPriceList.append(list[searchLoopCount + x + 1])
+                    detectedPriceList.append(btcPriceCloseList[loopIndex + line + 1])
 
-                    print("Current Index: " + str(currentIndex) + " Detected Index: " + str(searchLoopCount+2))
+                    print("CurrentIndex:{0} DetectedIndex:{1}".format(str(currentIndex), str(loopIndex + 2)))
                     print("Index price percentage list: " + str(priceChangeList))
                     print("Detected price percentage list: " + str(detectedPriceChangeList))
                     print("Index Price list: " + str(indexPriceList))
                     print("Detected Price list: " + str(detectedPriceList))
 
-                    print("Real Price percent: " + priceChangeList[lineCount] + " Expected Price percent: " + expectedPriceChange)
+                    print("Real Price percent: " + priceChangeList[
+                        LINE_COUNT] + " Expected Price percent: " + expectedPriceChange)
                     print("--------------------------------------------------------")
             else:
                 break
-
-        searchLoopCount += 1
