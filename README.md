@@ -1,5 +1,5 @@
 # Price-Pattern-Detector
-This script analyzes old price correlations from a historical CSV file. Its main purpose is to predict future price movements.
+This script analyzes old price correlations from a historical CSV file. Main purpose is to predict future price movements.
 
 ## Explanations about this script
 I am aware that this is just the beginning of the script. This phase is only a proof of concept. I would like to add some indicators for more accurate results. :)
