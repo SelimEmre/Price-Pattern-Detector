@@ -1,9 +1,9 @@
 # pylint: disable=line-too-long
 """This import needs for reading csv files"""
-import pandas
+import pandas as pd
 
 # Read the csv file and store it in the data variable
-data = pandas.read_csv("Bitstamp_BTCUSD_d.csv")
+data = pd.read_csv("Bitstamp_BTCUSD_d.csv")
 btcPriceCloseList = data['close'].tolist()
 
 LINE_COUNT = 6
