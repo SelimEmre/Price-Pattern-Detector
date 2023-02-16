@@ -2,12 +2,14 @@
 """This import needs for reading csv files"""
 import pandas as pd
 
+# https://www.cryptodatadownload.com/data/bitstamp/
+
 # Read the csv file and store it in the data variable
-data = pd.read_csv("Bitstamp_BTCUSD_d.csv")
+data = pd.read_csv("Bitstamp_BTCUSD_1h.csv")  # Bitstamp_BTCUSD_d.csv
 btcPriceCloseList = data['close'].tolist()
 
-LINE_COUNT = 6
-TOLERANCE_PERCENTAGE = 0.30
+LINE_COUNT = 10
+TOLERANCE_PERCENTAGE = 0.05
 
 print(f"Line Count: {LINE_COUNT}")
 print(f"Tolerance Percentage: {TOLERANCE_PERCENTAGE}")
@@ -28,9 +30,8 @@ for currentIndex in range(len(btcPriceCloseList)):
         if line + 1 == len(btcPriceCloseList):
             break
         priceChange = get_price_change(line)
-        priceChangeList.append(priceChange) #
+        priceChangeList.append(priceChange)
         indexPriceList.append(btcPriceCloseList[line])
-
 
     for loopIndex in range(currentIndex):
         sampleRate: int = 0
